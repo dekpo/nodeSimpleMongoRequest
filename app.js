@@ -13,8 +13,12 @@ count.exec((err,result)=>{
 const myMongoMethod = (request,response)=>{
     const skip = request.query.skip ? parseInt(request.query.skip) : 0;
     const limit = request.query.limit ? parseInt(request.query.limit) : 10;
+    const country_code = request.query.country ? request.query.country : "US";
+    const search = request.query.search ? request.query.search : "Room";
+    const q = new RegExp(search);
+    const filter = {$and: [{name: q },{"address.country_code": country_code}] }  ;
 
-    const listing = myModel.find({},{id:1,name:1,listing_url:1,summary:1})
+    const listing = myModel.find(filter,{id:1,name:1,listing_url:1,address:1,summary:1})
     .skip(skip)
     .limit(limit);
 
